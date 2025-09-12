@@ -21,8 +21,7 @@ El sistema está diseñado para integrarse con el frontend desarrollado en **Rea
 - **Spring Data JPA** (persistencia)  
 - **MySQL** (base de datos)  
 - **Spring Security** (autenticación y autorización)  
-- **Lombok** (optimización del código)
-- **Zustand** (estado global para cliente y administrador)  
+- **Lombok** (optimización del código)  
 
 ## 👥 Contribución
 
