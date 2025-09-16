@@ -11,17 +11,16 @@ El backend expone una API REST que permitirá:
 - Gestión de inventario.  
 - Administración de clientes y reportes.  
 
-El sistema está diseñado para integrarse con el frontend desarrollado en **React + Bootstrap**, y soporta tanto la vista de cliente como la interfaz de administración.  
+El sistema está diseñado para integrarse con el frontend desarrollado en **React + Tailwind CSS**, y soporta tanto la vista de cliente como la interfaz de administración.  
 
 ## 🛠️ Tecnologías principales
-
 - **Java 17**  
 - **Spring Boot 3.x**  
-- **Maven**  
-- **Spring Data JPA** (persistencia)  
-- **MySQL** (base de datos)  
-- **Spring Security** (autenticación y autorización)  
-- **Lombok** (optimización del código)  
+- **Spring Data JPA** – persistencia de datos  
+- **MySQL** – base de datos relacional  
+- **Spring Security** – autenticación y autorización  
+- **Lombok** – reducción de código boilerplate
+  
 
 ## 👥 Contribución
 
