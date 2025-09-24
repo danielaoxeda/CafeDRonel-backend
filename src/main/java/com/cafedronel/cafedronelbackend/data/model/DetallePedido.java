@@ -1,4 +1,4 @@
-package com.cafedronel.cafedronelbackend.model;
+package com.cafedronel.cafedronelbackend.data.model;
 
 import jakarta.persistence.*;
 
@@ -20,7 +20,7 @@ public class DetallePedido {
     private Integer cantidad;
     private Double subtotal;
 
-        public Integer getIdDetalle() { return idDetalle; }
+    public Integer getIdDetalle() { return idDetalle; }
     public void setIdDetalle(Integer idDetalle) { this.idDetalle = idDetalle; }
 
     public Pedido getPedido() { return pedido; }

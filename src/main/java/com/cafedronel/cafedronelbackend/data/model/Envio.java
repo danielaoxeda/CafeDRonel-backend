@@ -1,4 +1,4 @@
-package com.cafedronel.cafedronelbackend.model;
+package com.cafedronel.cafedronelbackend.data.model;
 
 import jakarta.persistence.*;
 
