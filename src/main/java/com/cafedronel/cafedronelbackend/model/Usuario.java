@@ -1,12 +1,12 @@
 package com.cafedronel.cafedronelbackend.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import java.util.List;
-import lombok.Data;   
 
 @Entity
 @Table(name = "usuario")
-@Data   
+@Data
 public class Usuario {
 
     @Id
@@ -18,7 +18,10 @@ public class Usuario {
     private String contrasena;
     private String telefono;
     private String direccion;
-    
+
+    @Enumerated(EnumType.STRING) 
+    private Rol rol;
+
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Pedido> pedidos;
 }
