@@ -1,9 +1,9 @@
 package com.cafedronel.cafedronelbackend.services.auth;
 
-import com.cafedronel.cafedronelbackend.data.dto.AuthResponse;
-import com.cafedronel.cafedronelbackend.data.dto.LoginRequest;
-import com.cafedronel.cafedronelbackend.data.dto.RegisterRequest;
-import com.cafedronel.cafedronelbackend.data.dto.VerifyRequest;
+import com.cafedronel.cafedronelbackend.data.dto.auth.AuthResponse;
+import com.cafedronel.cafedronelbackend.data.dto.auth.LoginRequest;
+import com.cafedronel.cafedronelbackend.data.dto.auth.RegisterRequest;
+import com.cafedronel.cafedronelbackend.data.dto.auth.VerifyRequest;
 
 public interface AuthService {
 

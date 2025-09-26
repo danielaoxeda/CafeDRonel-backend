@@ -1,10 +1,11 @@
 package com.cafedronel.cafedronelbackend.services.auth;
 
-import com.cafedronel.cafedronelbackend.data.dto.AuthResponse;
-import com.cafedronel.cafedronelbackend.data.dto.LoginRequest;
-import com.cafedronel.cafedronelbackend.data.dto.RegisterRequest;
-import com.cafedronel.cafedronelbackend.data.dto.VerifyRequest;
+import com.cafedronel.cafedronelbackend.data.dto.auth.AuthResponse;
+import com.cafedronel.cafedronelbackend.data.dto.auth.LoginRequest;
+import com.cafedronel.cafedronelbackend.data.dto.auth.RegisterRequest;
+import com.cafedronel.cafedronelbackend.data.dto.auth.VerifyRequest;
 import com.cafedronel.cafedronelbackend.data.model.Usuario;
+import com.cafedronel.cafedronelbackend.exceptions.BusinessException;
 import com.cafedronel.cafedronelbackend.repository.UsuarioRepository;
 import com.cafedronel.cafedronelbackend.util.jwt.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,34 +33,27 @@ public class ImpAuthService implements AuthService {
     public AuthResponse login(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequest.getCorreo(),
-                        loginRequest.getContrasena()
+                        loginRequest.correo(),
+                        loginRequest.contrasena()
                 )
         );
 
-        AuthResponse authResponse = new AuthResponse();
 
-        authResponse.setEmail(authentication.getName());
-        authResponse.setToken(jwtUtil.generateToken(authentication.getName()));
-        authResponse.setRol(authentication.getAuthorities().iterator().next().getAuthority());
-
-        System.out.println(authResponse);
-
-        return authResponse;
+        return new AuthResponse(jwtUtil.generateToken(authentication.getName()), authentication.getName(), authentication.getAuthorities().iterator().next().getAuthority());
     }
 
     @Override
     public Boolean register(RegisterRequest registerRequest) {
-        if (usuarioRepository.findByCorreo(registerRequest.getCorreo()).isPresent()) {
-            return false;
+        if (usuarioRepository.findByCorreo(registerRequest.correo()).isPresent()) {
+            throw new BusinessException("El usuario ya esta registrado");
         }
 
         Usuario newUser = new Usuario();
-        newUser.setCorreo(registerRequest.getCorreo());
-        newUser.setNombre(registerRequest.getNombre());
-        newUser.setContrasena(passwordEncoder.encode(registerRequest.getContrasena()));
-        newUser.setTelefono(registerRequest.getTelefono());
-        newUser.setDireccion(registerRequest.getDireccion());
+        newUser.setCorreo(registerRequest.correo());
+        newUser.setNombre(registerRequest.nombre());
+        newUser.setContrasena(passwordEncoder.encode(registerRequest.contrasena()));
+        newUser.setTelefono(registerRequest.telefono());
+        newUser.setDireccion(registerRequest.direccion());
 
         usuarioRepository.save(newUser);
 
@@ -68,7 +62,7 @@ public class ImpAuthService implements AuthService {
 
     @Override
     public Boolean verify(VerifyRequest verifyRequest) {
-        String token = verifyRequest.getToken();
+        String token = verifyRequest.token();
 
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
@@ -81,9 +75,9 @@ public class ImpAuthService implements AuthService {
                 return usuarioRepository.findByCorreo(username).isPresent();
             }
         } catch (Exception e) {
-            return false;
+            throw new  BusinessException("El token no es valido");
         }
 
-        return false;
+        throw new BusinessException("El token no es valido");
     }
 }
