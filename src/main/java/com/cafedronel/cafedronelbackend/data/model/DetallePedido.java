@@ -1,10 +1,15 @@
-package com.cafedronel.cafedronelbackend.data.model;
+package com.cafedronel.cafedronelbackend.model;
 
+import com.cafedronel.cafedronelbackend.data.model.Pedido;
+import com.cafedronel.cafedronelbackend.data.model.Producto;
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name = "detalle_pedido")
+@Data   
 public class DetallePedido {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idDetalle;
@@ -19,20 +24,4 @@ public class DetallePedido {
 
     private Integer cantidad;
     private Double subtotal;
-
-    public Integer getIdDetalle() { return idDetalle; }
-    public void setIdDetalle(Integer idDetalle) { this.idDetalle = idDetalle; }
-
-    public Pedido getPedido() { return pedido; }
-    public void setPedido(Pedido pedido) { this.pedido = pedido; }
-
-    public Producto getProducto() { return producto; }
-    public void setProducto(Producto producto) { this.producto = producto; }
-
-    public Integer getCantidad() { return cantidad; }
-    public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
-
-    public Double getSubtotal() { return subtotal; }
-    public void setSubtotal(Double subtotal) { this.subtotal = subtotal; }
-
 }
