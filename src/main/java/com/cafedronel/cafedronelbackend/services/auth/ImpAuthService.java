@@ -54,6 +54,7 @@ public class ImpAuthService implements AuthService {
         newUser.setContrasena(passwordEncoder.encode(registerRequest.contrasena()));
         newUser.setTelefono(registerRequest.telefono());
         newUser.setDireccion(registerRequest.direccion());
+        newUser.setRol(registerRequest.rol());
 
         usuarioRepository.save(newUser);
 

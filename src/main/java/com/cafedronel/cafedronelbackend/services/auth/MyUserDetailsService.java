@@ -24,7 +24,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
         return User.withUsername(usuario.getCorreo())
                 .password(usuario.getContrasena())
-                .authorities("USER")
+                .authorities(String.valueOf(usuario.getRol()))
                 .build();
     }
 }

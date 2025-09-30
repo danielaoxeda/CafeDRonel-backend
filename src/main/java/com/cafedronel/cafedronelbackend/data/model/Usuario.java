@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import com.cafedronel.cafedronelbackend.model.Rol;
+import com.cafedronel.cafedronelbackend.data.model.Rol;
 
 import java.util.List;
 
@@ -26,6 +26,8 @@ public class Usuario {
 
     @Enumerated(EnumType.STRING)
     private Rol rol;
+
+    private String recoveryCode;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Pedido> pedidos;

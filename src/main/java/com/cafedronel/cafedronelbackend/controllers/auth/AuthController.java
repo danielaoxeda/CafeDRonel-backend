@@ -1,5 +1,6 @@
-package com.cafedronel.cafedronelbackend.controllers;
+package com.cafedronel.cafedronelbackend.controllers.auth;
 
+import com.cafedronel.cafedronelbackend.data.dto.MessageResponse;
 import com.cafedronel.cafedronelbackend.data.dto.auth.AuthResponse;
 import com.cafedronel.cafedronelbackend.data.dto.auth.LoginRequest;
 import com.cafedronel.cafedronelbackend.data.dto.auth.RegisterRequest;
@@ -28,12 +29,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Boolean> register(@RequestBody RegisterRequest registerRequest) {
-        return ResponseEntity.status(HttpStatus.OK).body(authService.register(registerRequest));
+    public ResponseEntity<MessageResponse<Boolean>> register(@RequestBody RegisterRequest registerRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(authService.register(registerRequest)));
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<Boolean> verify(@RequestBody VerifyRequest verifyRequest) {
-        return ResponseEntity.status(HttpStatus.OK).body(authService.verify(verifyRequest));
+    public ResponseEntity<MessageResponse<Boolean>> verify(@RequestBody VerifyRequest verifyRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse<>(authService.verify(verifyRequest)));
     }
 }
