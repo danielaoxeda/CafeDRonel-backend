@@ -43,13 +43,13 @@ public class ImpPasswordService implements PasswordService {
     public Boolean resetPassword(ResetPasswordRequest resetPasswordRequest) {
         Usuario userFound = this.usuarioRepository.findByCorreo(resetPasswordRequest.email()).orElseThrow(() -> new BusinessException("El usuario no existe"));
 
-        if (userFound.getRecoveryCode().equals(resetPasswordRequest.recoveryCode())) {
-            userFound.setContrasena(passwordEncoder.encode(resetPasswordRequest.newPassword()));
-            this.usuarioRepository.save(userFound);
-            return true;
-        } else {
+        if (userFound.getRecoveryCode() == null || resetPasswordRequest.recoveryCode() == null || !userFound.getRecoveryCode().equals(resetPasswordRequest.recoveryCode())) {
             throw new BusinessException("El código de recuperación no es valido");
         }
+        
+        userFound.setContrasena(passwordEncoder.encode(resetPasswordRequest.newPassword()));
+        this.usuarioRepository.save(userFound);
+        return true;
 
     }
 

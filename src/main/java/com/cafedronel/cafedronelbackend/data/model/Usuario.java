@@ -2,10 +2,6 @@ package com.cafedronel.cafedronelbackend.data.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import com.cafedronel.cafedronelbackend.data.model.Rol;
 
 import java.util.List;
 

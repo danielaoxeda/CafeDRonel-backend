@@ -1,6 +1,5 @@
 package com.cafedronel.cafedronelbackend.util.jwt;
 
-import com.cafedronel.cafedronelbackend.data.model.Usuario;
 import com.cafedronel.cafedronelbackend.repository.UsuarioRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -50,7 +49,7 @@ public class JwtUtil {
     public boolean validateToken(String authToken, String email) {
         String tokenEmail = extractEmail(authToken);
 
-        Usuario userFound = this.usuarioRepository.getUsuarioByCorreo(tokenEmail).orElseThrow();
+        this.usuarioRepository.getUsuarioByCorreo(tokenEmail).orElseThrow();
 
         return email.equals(tokenEmail) && !isTokenExpired(authToken);
     }

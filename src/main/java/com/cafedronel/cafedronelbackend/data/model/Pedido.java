@@ -1,6 +1,5 @@
 package com.cafedronel.cafedronelbackend.data.model;
 
-import com.cafedronel.cafedronelbackend.model.DetallePedido;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.Date;

@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,8 +14,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.OffsetDateTime;
 
-@Order
-@RestControllerAdvice
+@Order(1)
+@RestControllerAdvice(basePackages = "com.cafedronel.cafedronelbackend.controllers")
 public class GlobalExceptionConfig {
 
     private ResponseEntity<ApiError> build(HttpStatus status, String message, String path) {
@@ -25,7 +26,6 @@ public class GlobalExceptionConfig {
                 path,
                 OffsetDateTime.now()
         );
-
         return ResponseEntity.status(status).body(body);
     }
 
@@ -43,19 +43,37 @@ public class GlobalExceptionConfig {
         return build(HttpStatus.BAD_REQUEST, message, req.getRequestURI());
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiError> handleIllegalArgument(IllegalArgumentException ex, HttpServletRequest req) {
+    // Guava + validaciones personalizadas
+    @ExceptionHandler({
+            IllegalArgumentException.class,
+            NullPointerException.class,
+            IllegalStateException.class
+    })
+    public ResponseEntity<ApiError> handleGuavaValidation(RuntimeException ex, HttpServletRequest req) {
         return build(HttpStatus.BAD_REQUEST, ex.getMessage(), req.getRequestURI());
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleGeneric(Exception ex, HttpServletRequest req) {
-        // Evita filtrar detalles sensibles
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Ha ocurrido un error interno", req.getRequestURI());
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiError> handleJsonParseError(HttpMessageNotReadableException ex, HttpServletRequest req) {
+        Throwable cause = ex.getCause();
+
+        // Si la causa es IllegalArgumentException (por Guava Preconditions)
+        if (cause instanceof IllegalArgumentException) {
+            return build(HttpStatus.BAD_REQUEST, cause.getMessage(), req.getRequestURI());
+        }
+
+        // Si no, se devuelve un mensaje genérico
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), req.getRequestURI());
     }
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiError> handleBusiness(BusinessException ex, HttpServletRequest req) {
         return build(HttpStatus.BAD_REQUEST, ex.getMessage(), req.getRequestURI());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiError> handleGeneric(Exception ex, HttpServletRequest req) {
+        ex.printStackTrace(); // o logger.error("Unexpected error", ex);
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Ha ocurrido un error interno", req.getRequestURI());
     }
 }
