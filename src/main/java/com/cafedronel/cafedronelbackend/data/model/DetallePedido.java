@@ -21,5 +21,6 @@ public class DetallePedido {
     private Producto producto;
 
     private Integer cantidad;
+    private Double precioUnitario;
     private Double subtotal;
 }
