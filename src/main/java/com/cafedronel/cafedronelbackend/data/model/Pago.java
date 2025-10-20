@@ -17,10 +17,11 @@ public class Pago {
     @JoinColumn(name = "id_pedido")
     private Pedido pedido;
 
-    private String metodo;
+    private String metodoPago;
     private Double monto;
-    private String codigoOperacion;
+    private String estado;
+    private String referencia;
 
     @Temporal(TemporalType.DATE)
-    private Date fecha;
+    private Date fechaPago;
 }
