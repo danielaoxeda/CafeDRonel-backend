@@ -38,8 +38,10 @@ public class ImpAuthService implements AuthService {
                 )
         );
 
+        Usuario userFound = usuarioRepository.findByCorreo(loginRequest.correo()).orElseThrow(() -> new BusinessException("El usuario no existe"));
 
-        return new AuthResponse(jwtUtil.generateToken(authentication.getName()), authentication.getName(), authentication.getAuthorities().iterator().next().getAuthority());
+
+        return new AuthResponse(jwtUtil.generateToken(authentication.getName()), authentication.getName(), authentication.getAuthorities().iterator().next().getAuthority(), userFound.getIdUsuario());
     }
 
     @Override
@@ -76,7 +78,7 @@ public class ImpAuthService implements AuthService {
                 return usuarioRepository.findByCorreo(username).isPresent();
             }
         } catch (Exception e) {
-            throw new  BusinessException("El token no es valido");
+            throw new BusinessException("El token no es valido");
         }
 
         throw new BusinessException("El token no es valido");
