@@ -1,26 +1,26 @@
 package com.cafedronel.cafedronelbackend.controllers.detallepedido;
 
-import com.cafedronel.cafedronelbackend.data.model.DetallePedido;
-import com.cafedronel.cafedronelbackend.data.model.Pedido;
-import com.cafedronel.cafedronelbackend.data.model.Producto;
-import com.cafedronel.cafedronelbackend.services.detallepedido.DetallePedidoService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-
 import java.util.Arrays;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.when;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.cafedronel.cafedronelbackend.data.model.DetallePedido;
+import com.cafedronel.cafedronelbackend.data.model.Pedido;
+import com.cafedronel.cafedronelbackend.data.model.Producto;
+import com.cafedronel.cafedronelbackend.services.detallepedido.DetallePedidoService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -29,7 +29,7 @@ class DetallePedidoControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private DetallePedidoService detallePedidoService;
 
     private DetallePedido detallePedido;
@@ -59,7 +59,7 @@ class DetallePedidoControllerTest {
     void getDetallesByPedidoId() throws Exception {
         when(detallePedidoService.findByPedidoId(1)).thenReturn(Arrays.asList(detallePedido));
 
-        mockMvc.perform(get("/api/detalles/pedido/1"))
+        mockMvc.perform(get("/api/v1/detalles-pedido/pedido/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].idDetalle").value(1))
                 .andExpect(jsonPath("$[0].cantidad").value(2))
@@ -71,7 +71,7 @@ class DetallePedidoControllerTest {
     void getDetalleById() throws Exception {
         when(detallePedidoService.findById(1)).thenReturn(Optional.of(detallePedido));
 
-        mockMvc.perform(get("/api/detalles/1"))
+        mockMvc.perform(get("/api/v1/detalles-pedido/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idDetalle").value(1))
                 .andExpect(jsonPath("$.cantidad").value(2))
@@ -83,14 +83,14 @@ class DetallePedidoControllerTest {
     void getDetalleById_notFound() throws Exception {
         when(detallePedidoService.findById(1)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/detalles/1"))
+        mockMvc.perform(get("/api/v1/detalles-pedido/1"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
     void deleteDetalle() throws Exception {
-        mockMvc.perform(delete("/api/detalles/1"))
+        mockMvc.perform(delete("/api/v1/detalles-pedido/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Detalle de pedido eliminado correctamente"));
     }

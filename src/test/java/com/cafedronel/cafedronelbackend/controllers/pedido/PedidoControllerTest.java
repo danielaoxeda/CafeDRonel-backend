@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -38,13 +38,13 @@ class PedidoControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private PedidoService pedidoService;
 
-    @MockBean
+    @MockitoBean
     private UsuarioRepository usuarioRepository;
 
-    @MockBean
+    @MockitoBean
     private PedidoRepository pedidoRepository;
 
     private Pedido pedido;
@@ -77,7 +77,7 @@ class PedidoControllerTest {
     void getAllPedidos() throws Exception {
         when(pedidoService.findAll()).thenReturn(Arrays.asList(pedido));
 
-        mockMvc.perform(get("/api/pedidos"))
+        mockMvc.perform(get("/api/v1/pedidos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].idPedido").value(1))
                 .andExpect(jsonPath("$[0].estado").value("PENDIENTE"));
@@ -88,7 +88,7 @@ class PedidoControllerTest {
     void getPedidoById() throws Exception {
         when(pedidoService.findById(1)).thenReturn(Optional.of(pedido));
 
-        mockMvc.perform(get("/api/pedidos/1"))
+        mockMvc.perform(get("/api/v1/pedidos/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idPedido").value(1))
                 .andExpect(jsonPath("$.estado").value("PENDIENTE"));
@@ -99,7 +99,7 @@ class PedidoControllerTest {
     void getPedidoById_notFound() throws Exception {
         when(pedidoService.findById(1)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/pedidos/1"))
+        mockMvc.perform(get("/api/v1/pedidos/1"))
                 .andExpect(status().isNotFound());
     }
 
@@ -108,7 +108,7 @@ class PedidoControllerTest {
     void getPedidosByUsuarioId() throws Exception {
         when(pedidoService.findByUsuarioId(1)).thenReturn(Arrays.asList(pedido));
 
-        mockMvc.perform(get("/api/pedidos/usuario/1"))
+        mockMvc.perform(get("/api/v1/pedidos/usuario/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].idPedido").value(1))
                 .andExpect(jsonPath("$[0].estado").value("PENDIENTE"));
@@ -120,7 +120,7 @@ class PedidoControllerTest {
         when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
         when(pedidoService.save(any(Pedido.class))).thenReturn(pedido);
 
-        mockMvc.perform(post("/api/pedidos")
+        mockMvc.perform(post("/api/v1/pedidos")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(pedidoDTO)))
                 .andExpect(status().isCreated())
@@ -134,7 +134,7 @@ class PedidoControllerTest {
         when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
         when(pedidoService.update(eq(1), any(Pedido.class))).thenReturn(pedido);
 
-        mockMvc.perform(put("/api/pedidos/1")
+        mockMvc.perform(put("/api/v1/pedidos/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(pedidoDTO)))
                 .andExpect(status().isOk())
@@ -148,7 +148,7 @@ class PedidoControllerTest {
         pedido.setEstado("COMPLETADO");
         when(pedidoService.cambiarEstado(1, "COMPLETADO")).thenReturn(pedido);
 
-        mockMvc.perform(patch("/api/pedidos/1/estado")
+        mockMvc.perform(patch("/api/v1/pedidos/1/estado")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("\"COMPLETADO\""))
                 .andExpect(status().isOk())
@@ -159,7 +159,7 @@ class PedidoControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void deletePedido() throws Exception {
-        mockMvc.perform(delete("/api/pedidos/1"))
+        mockMvc.perform(delete("/api/v1/pedidos/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Pedido eliminado correctamente"));
     }

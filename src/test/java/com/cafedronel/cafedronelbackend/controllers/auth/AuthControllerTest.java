@@ -45,7 +45,7 @@ class AuthControllerTest {
     void login_ConCredencialesValidas_DeberiaRetornarAuthResponse() throws Exception {
         // Arrange
         LoginRequest loginRequest = new LoginRequest("test@example.com", "password123");
-        AuthResponse authResponse = new AuthResponse("jwt-token", "test@example.com", "USER");
+        AuthResponse authResponse = new AuthResponse("jwt-token", "test@example.com", "CLIENTE");
         
         when(authService.login(any(LoginRequest.class))).thenReturn(authResponse);
 
@@ -57,7 +57,7 @@ class AuthControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.token").value("jwt-token"))
                 .andExpect(jsonPath("$.email").value("test@example.com"))
-                .andExpect(jsonPath("$.role").value("USER"));
+                .andExpect(jsonPath("$.rol").value("CLIENTE"));
 
         verify(authService).login(any(LoginRequest.class));
     }
@@ -83,8 +83,8 @@ class AuthControllerTest {
     void register_ConUsuarioNuevo_DeberiaRegistrarUsuario() throws Exception {
         // Arrange
         RegisterRequest registerRequest = new RegisterRequest(
-                "test@example.com",
                 "Test User",
+                "test@example.com",
                 "password123",
                 "123456789",
                 "Test Address",
@@ -109,8 +109,8 @@ class AuthControllerTest {
     void register_ConUsuarioExistente_DeberiaRetornarError() throws Exception {
         // Arrange
         RegisterRequest registerRequest = new RegisterRequest(
-                "test@example.com",
                 "Test User",
+                "test@example.com",
                 "password123",
                 "123456789",
                 "Test Address",

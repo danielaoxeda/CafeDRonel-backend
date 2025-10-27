@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -37,10 +37,10 @@ class EnvioControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private EnvioService envioService;
 
-    @MockBean
+    @MockitoBean
     private PedidoRepository pedidoRepository;
 
     private Envio envio;
@@ -71,7 +71,7 @@ class EnvioControllerTest {
     void getAllEnvios() throws Exception {
         when(envioService.findAll()).thenReturn(Arrays.asList(envio));
 
-        mockMvc.perform(get("/api/envios"))
+        mockMvc.perform(get("/api/v1/envios"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].idEnvio").value(1))
                 .andExpect(jsonPath("$[0].estado").value("PENDIENTE"));
@@ -82,7 +82,7 @@ class EnvioControllerTest {
     void getEnvioById() throws Exception {
         when(envioService.findById(1)).thenReturn(Optional.of(envio));
 
-        mockMvc.perform(get("/api/envios/1"))
+        mockMvc.perform(get("/api/v1/envios/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idEnvio").value(1))
                 .andExpect(jsonPath("$.estado").value("PENDIENTE"));
@@ -93,7 +93,7 @@ class EnvioControllerTest {
     void getEnvioById_notFound() throws Exception {
         when(envioService.findById(1)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/envios/1"))
+        mockMvc.perform(get("/api/v1/envios/1"))
                 .andExpect(status().isNotFound());
     }
 
@@ -102,7 +102,7 @@ class EnvioControllerTest {
     void getEnvioByPedidoId() throws Exception {
         when(envioService.findByPedidoId(1)).thenReturn(Optional.of(envio));
 
-        mockMvc.perform(get("/api/envios/pedido/1"))
+        mockMvc.perform(get("/api/v1/envios/pedido/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idEnvio").value(1))
                 .andExpect(jsonPath("$.estado").value("PENDIENTE"));
@@ -114,7 +114,7 @@ class EnvioControllerTest {
         when(pedidoRepository.findById(1)).thenReturn(Optional.of(pedido));
         when(envioService.save(any(Envio.class))).thenReturn(envio);
 
-        mockMvc.perform(post("/api/envios")
+        mockMvc.perform(post("/api/v1/envios")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(envioDTO)))
                 .andExpect(status().isCreated())
@@ -128,7 +128,7 @@ class EnvioControllerTest {
         when(pedidoRepository.findById(1)).thenReturn(Optional.of(pedido));
         when(envioService.update(eq(1), any(Envio.class))).thenReturn(envio);
 
-        mockMvc.perform(put("/api/envios/1")
+        mockMvc.perform(put("/api/v1/envios/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(envioDTO)))
                 .andExpect(status().isOk())
@@ -142,7 +142,7 @@ class EnvioControllerTest {
         envio.setEstado("ENVIADO");
         when(envioService.actualizarEstado(1, "ENVIADO")).thenReturn(envio);
 
-        mockMvc.perform(patch("/api/envios/1/estado")
+        mockMvc.perform(patch("/api/v1/envios/1/estado")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("\"ENVIADO\""))
                 .andExpect(status().isOk())
@@ -153,7 +153,7 @@ class EnvioControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void deleteEnvio() throws Exception {
-        mockMvc.perform(delete("/api/envios/1"))
+        mockMvc.perform(delete("/api/v1/envios/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Envío eliminado correctamente"));
     }

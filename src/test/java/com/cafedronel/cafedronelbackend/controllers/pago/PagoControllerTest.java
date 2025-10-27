@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -37,10 +37,10 @@ class PagoControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private PagoService pagoService;
 
-    @MockBean
+    @MockitoBean
     private PedidoRepository pedidoRepository;
 
     private Pago pago;
@@ -73,7 +73,7 @@ class PagoControllerTest {
     void getAllPagos() throws Exception {
         when(pagoService.findAll()).thenReturn(Arrays.asList(pago));
 
-        mockMvc.perform(get("/api/pagos"))
+        mockMvc.perform(get("/api/v1/pagos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].idPago").value(1))
                 .andExpect(jsonPath("$[0].estado").value("COMPLETADO"));
@@ -84,7 +84,7 @@ class PagoControllerTest {
     void getPagoById() throws Exception {
         when(pagoService.findById(1)).thenReturn(Optional.of(pago));
 
-        mockMvc.perform(get("/api/pagos/1"))
+        mockMvc.perform(get("/api/v1/pagos/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idPago").value(1))
                 .andExpect(jsonPath("$.estado").value("COMPLETADO"));
@@ -95,7 +95,7 @@ class PagoControllerTest {
     void getPagoByPedidoId() throws Exception {
         when(pagoService.findByPedidoId(1)).thenReturn(Optional.of(pago));
 
-        mockMvc.perform(get("/api/pagos/pedido/1"))
+        mockMvc.perform(get("/api/v1/pagos/pedido/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idPago").value(1))
                 .andExpect(jsonPath("$.estado").value("COMPLETADO"));
@@ -107,7 +107,7 @@ class PagoControllerTest {
         when(pedidoRepository.findById(1)).thenReturn(Optional.of(pedido));
         when(pagoService.save(any(Pago.class))).thenReturn(pago);
 
-        mockMvc.perform(post("/api/pagos")
+        mockMvc.perform(post("/api/v1/pagos")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(pagoDTO)))
                 .andExpect(status().isCreated())
@@ -121,7 +121,7 @@ class PagoControllerTest {
         when(pedidoRepository.findById(1)).thenReturn(Optional.of(pedido));
         when(pagoService.update(eq(1), any(Pago.class))).thenReturn(pago);
 
-        mockMvc.perform(put("/api/pagos/1")
+        mockMvc.perform(put("/api/v1/pagos/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(pagoDTO)))
                 .andExpect(status().isOk())
@@ -132,7 +132,7 @@ class PagoControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void deletePago() throws Exception {
-        mockMvc.perform(delete("/api/pagos/1"))
+        mockMvc.perform(delete("/api/v1/pagos/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Pago eliminado correctamente"));
     }

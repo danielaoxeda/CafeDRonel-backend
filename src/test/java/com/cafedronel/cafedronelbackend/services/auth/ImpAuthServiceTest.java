@@ -57,8 +57,8 @@ class ImpAuthServiceTest {
     void setUp() {
         loginRequest = new LoginRequest("test@example.com", "password123");
         registerRequest = new RegisterRequest(
-                "test@example.com",
                 "Test User",
+                "test@example.com",
                 "password123",
                 "123456789",
                 "Test Address",
@@ -75,15 +75,17 @@ class ImpAuthServiceTest {
         usuario.setDireccion("Test Address");
         usuario.setRol(Rol.CLIENTE);
 
-        authentication = mock(Authentication.class);
-        when(authentication.getName()).thenReturn("test@example.com");
-        doReturn(Collections.singletonList(new SimpleGrantedAuthority("CLIENTE")))
-                .when(authentication).getAuthorities();
+
     }
 
     @Test
     void login_ConCredencialesValidas_DeberiaRetornarAuthResponse() {
         // Arrange
+        authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("test@example.com");
+        doReturn(Collections.singletonList(new SimpleGrantedAuthority("CLIENTE")))
+                .when(authentication).getAuthorities();
+        
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
         when(jwtUtil.generateToken("test@example.com")).thenReturn("jwt-token");
@@ -163,12 +165,13 @@ class ImpAuthServiceTest {
     @Test
     void verify_ConTokenInvalido_DeberiaLanzarBusinessException() {
         // Arrange
+        VerifyRequest invalidTokenRequest = new VerifyRequest("Bearer invalid-token");
         when(jwtUtil.extractEmail("invalid-token")).thenReturn("test@example.com");
         when(jwtUtil.validateToken("invalid-token", "test@example.com")).thenReturn(false);
 
         // Act & Assert
         BusinessException exception = assertThrows(BusinessException.class, 
-                () -> authService.verify(verifyRequest));
+                () -> authService.verify(invalidTokenRequest));
         
         assertEquals("El token no es valido", exception.getMessage());
         verify(jwtUtil).extractEmail("invalid-token");
