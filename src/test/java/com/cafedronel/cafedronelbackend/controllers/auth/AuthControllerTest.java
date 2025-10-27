@@ -45,14 +45,14 @@ class AuthControllerTest {
     void login_ConCredencialesValidas_DeberiaRetornarAuthResponse() throws Exception {
         // Arrange
         LoginRequest loginRequest = new LoginRequest("test@example.com", "password123");
-        AuthResponse authResponse = new AuthResponse("jwt-token", "test@example.com", "CLIENTE");
-        
+        AuthResponse authResponse = new AuthResponse("jwt-token", "test@example.com", "CLIENTE", 1);
+
         when(authService.login(any(LoginRequest.class))).thenReturn(authResponse);
 
         // Act & Assert
         mockMvc.perform(post("/api/v1/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.token").value("jwt-token"))
@@ -66,14 +66,14 @@ class AuthControllerTest {
     void login_ConCredencialesInvalidas_DeberiaRetornarError() throws Exception {
         // Arrange
         LoginRequest loginRequest = new LoginRequest("test@example.com", "wrongpassword");
-        
+
         when(authService.login(any(LoginRequest.class)))
                 .thenThrow(new RuntimeException("Credenciales inválidas"));
 
         // Act & Assert
         mockMvc.perform(post("/api/v1/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isInternalServerError());
 
         verify(authService).login(any(LoginRequest.class));
@@ -90,13 +90,13 @@ class AuthControllerTest {
                 "Test Address",
                 Rol.CLIENTE
         );
-        
+
         when(authService.register(any(RegisterRequest.class))).thenReturn(true);
 
         // Act & Assert
         mockMvc.perform(post("/api/v1/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerRequest)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data").value(true))
@@ -116,14 +116,14 @@ class AuthControllerTest {
                 "Test Address",
                 Rol.CLIENTE
         );
-        
+
         when(authService.register(any(RegisterRequest.class)))
                 .thenThrow(new BusinessException("El usuario ya esta registrado"));
 
         // Act & Assert
         mockMvc.perform(post("/api/v1/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerRequest)))
                 .andExpect(status().isInternalServerError());
 
         verify(authService).register(any(RegisterRequest.class));
@@ -133,13 +133,13 @@ class AuthControllerTest {
     void verify_ConTokenValido_DeberiaRetornarTrue() throws Exception {
         // Arrange
         VerifyRequest verifyRequest = new VerifyRequest("Bearer valid-token");
-        
+
         when(authService.verify(any(VerifyRequest.class))).thenReturn(true);
 
         // Act & Assert
         mockMvc.perform(post("/api/v1/auth/verify")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(verifyRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(verifyRequest)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data").value(true))
@@ -152,14 +152,14 @@ class AuthControllerTest {
     void verify_ConTokenInvalido_DeberiaRetornarError() throws Exception {
         // Arrange
         VerifyRequest verifyRequest = new VerifyRequest("Bearer invalid-token");
-        
+
         when(authService.verify(any(VerifyRequest.class)))
                 .thenThrow(new BusinessException("El token no es valido"));
 
         // Act & Assert
         mockMvc.perform(post("/api/v1/auth/verify")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(verifyRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(verifyRequest)))
                 .andExpect(status().isInternalServerError());
 
         verify(authService).verify(any(VerifyRequest.class));
@@ -172,8 +172,8 @@ class AuthControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/api/v1/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(invalidJson))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidJson))
                 .andExpect(status().isBadRequest());
 
         verify(authService, never()).login(any(LoginRequest.class));
@@ -186,8 +186,8 @@ class AuthControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/api/v1/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(invalidJson))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidJson))
                 .andExpect(status().isBadRequest());
 
         verify(authService, never()).register(any(RegisterRequest.class));
