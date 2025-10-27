@@ -31,7 +31,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/api/v1/auth/**", "/api-docs/**", "/swagger-ui/**").permitAll().anyRequest().authenticated()
+                        auth.requestMatchers("/api/v1/auth/**", "/api-docs/**", "/swagger-ui/**", "/api/v1/productos/**").permitAll().anyRequest().authenticated()
                 )
                 // añade el provider para que se use tu UserDetailsService
                 .authenticationProvider(daoAuthenticationProvider())
