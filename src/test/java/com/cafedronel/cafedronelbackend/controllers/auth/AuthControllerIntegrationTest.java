@@ -54,7 +54,8 @@ class AuthControllerIntegrationTest {
     void register_ConUsuarioNuevo_DeberiaRegistrarCorrectamente() throws Exception {
         // Arrange
         RegisterRequest registerRequest = new RegisterRequest(
-                "Test User",
+                "Test Name User",
+                "Test Last User",
                 "test@example.com",
                 "password123",
                 "123456789",
@@ -93,8 +94,9 @@ class AuthControllerIntegrationTest {
         usuarioRepository.save(usuarioExistente);
 
         RegisterRequest registerRequest = new RegisterRequest(
-                "Test User",
-                "usuario@test.com",
+                "Test Name User",
+                "Test Last User",
+                "test@example.com",
                 "password123",
                 "123456789",
                 "Test Address",

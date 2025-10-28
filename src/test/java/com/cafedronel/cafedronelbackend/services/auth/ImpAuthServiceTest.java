@@ -57,7 +57,8 @@ class ImpAuthServiceTest {
     void setUp() {
         loginRequest = new LoginRequest("test@example.com", "password123");
         registerRequest = new RegisterRequest(
-                "Test User",
+                "Test Name User",
+                "Test Last User",
                 "test@example.com",
                 "password123",
                 "123456789",
@@ -69,7 +70,8 @@ class ImpAuthServiceTest {
         usuario = new Usuario();
         usuario.setIdUsuario(1);
         usuario.setCorreo("test@example.com");
-        usuario.setNombre("Test User");
+        usuario.setNombre("Test Name User");
+        usuario.setApellido("Test Last User");
         usuario.setContrasena("encodedPassword");
         usuario.setTelefono("123456789");
         usuario.setDireccion("Test Address");

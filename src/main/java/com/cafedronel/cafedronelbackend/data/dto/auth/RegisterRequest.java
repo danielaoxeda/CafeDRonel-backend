@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 public record RegisterRequest(
         String nombre,
+        String apellido,
         String correo,
         String contrasena,
         String telefono,
@@ -24,6 +25,8 @@ public record RegisterRequest(
     public RegisterRequest {
         // --- nombre ---
         Preconditions.checkArgument(!Strings.isNullOrEmpty(nombre), "El nombre es obligatorio");
+        // --- nombre ---
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(apellido), "El apellido es obligatorio");
 
         // --- correo ---
         Preconditions.checkArgument(!Strings.isNullOrEmpty(correo), "El correo es obligatorio");
@@ -47,6 +50,7 @@ public record RegisterRequest(
         // --- normalización opcional ---
         correo = correo.trim().toLowerCase();
         nombre = nombre.trim();
+        apellido = apellido.trim();
         direccion = direccion.trim();
         telefono = telefono.trim();
     }
