@@ -91,15 +91,18 @@ public class ImpClienteService implements ClienteService {
                 .orElseThrow(() -> new BusinessException("Cliente no encontrado con ID: " + id));
 
         // Verificar si el correo ya existe (si se está actualizando)
-        if (clienteUpdate.getCorreo() != null && 
-            !clienteUpdate.getCorreo().equals(usuario.getCorreo()) &&
-            usuarioRepository.existsByCorreo(clienteUpdate.getCorreo())) {
+        if (clienteUpdate.getCorreo() != null &&
+                !clienteUpdate.getCorreo().equals(usuario.getCorreo()) &&
+                usuarioRepository.existsByCorreo(clienteUpdate.getCorreo())) {
             throw new BusinessException("Ya existe un usuario con el correo: " + clienteUpdate.getCorreo());
         }
 
         // Actualizar solo los campos que no son nulos
         if (clienteUpdate.getNombre() != null) {
             usuario.setNombre(clienteUpdate.getNombre());
+        }
+        if (clienteUpdate.getApellido() != null) {
+            usuario.setApellido(clienteUpdate.getApellido());
         }
         if (clienteUpdate.getCorreo() != null) {
             usuario.setCorreo(clienteUpdate.getCorreo());
@@ -119,7 +122,7 @@ public class ImpClienteService implements ClienteService {
     public void deleteById(Integer id) {
         Usuario usuario = usuarioRepository.findByIdUsuarioAndRol(id, Rol.CLIENTE)
                 .orElseThrow(() -> new BusinessException("Cliente no encontrado con ID: " + id));
-        
+
         usuarioRepository.delete(usuario);
     }
 
@@ -139,6 +142,7 @@ public class ImpClienteService implements ClienteService {
         return ClienteDTO.builder()
                 .idUsuario(usuario.getIdUsuario())
                 .nombre(usuario.getNombre())
+                .apellido(usuario.getApellido())
                 .correo(usuario.getCorreo())
                 .telefono(usuario.getTelefono())
                 .direccion(usuario.getDireccion())
