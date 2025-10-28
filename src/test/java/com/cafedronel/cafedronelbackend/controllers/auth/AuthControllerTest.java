@@ -83,7 +83,8 @@ class AuthControllerTest {
     void register_ConUsuarioNuevo_DeberiaRegistrarUsuario() throws Exception {
         // Arrange
         RegisterRequest registerRequest = new RegisterRequest(
-                "Test User",
+                "Test Name User",
+                "Test Last User",
                 "test@example.com",
                 "password123",
                 "123456789",
@@ -109,7 +110,8 @@ class AuthControllerTest {
     void register_ConUsuarioExistente_DeberiaRetornarError() throws Exception {
         // Arrange
         RegisterRequest registerRequest = new RegisterRequest(
-                "Test User",
+                "Test Name User",
+                "Test Last User",
                 "test@example.com",
                 "password123",
                 "123456789",
