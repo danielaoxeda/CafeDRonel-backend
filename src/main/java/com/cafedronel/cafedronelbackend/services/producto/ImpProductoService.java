@@ -1,16 +1,16 @@
 package com.cafedronel.cafedronelbackend.services.producto;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.cafedronel.cafedronelbackend.data.dto.producto.ProductoRequestDTO;
 import com.cafedronel.cafedronelbackend.data.dto.producto.ProductoResponseDTO;
 import com.cafedronel.cafedronelbackend.data.model.Producto;
 import com.cafedronel.cafedronelbackend.exceptions.BusinessException;
 import com.cafedronel.cafedronelbackend.repository.ProductoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ImpProductoService implements ProductoService {
@@ -84,5 +84,36 @@ public class ImpProductoService implements ProductoService {
         producto.setPrecio(dto.getPrecio());
         producto.setStock(dto.getStock());
         producto.setActivo(dto.getActivo() != null ? dto.getActivo() : true);
+    }
+
+    @Override
+    public void disminuirStock(Integer productoId, Integer cantidad) {
+        Producto producto = productoRepository.findById(productoId)
+                .orElseThrow(() -> new BusinessException("Producto no encontrado con ID: " + productoId));
+        
+        if (producto.getStock() < cantidad) {
+            throw new BusinessException("Stock insuficiente para el producto: " + producto.getNombre() + 
+                    ". Stock disponible: " + producto.getStock() + ", cantidad solicitada: " + cantidad);
+        }
+        
+        producto.setStock(producto.getStock() - cantidad);
+        productoRepository.save(producto);
+    }
+
+    @Override
+    public void aumentarStock(Integer productoId, Integer cantidad) {
+        Producto producto = productoRepository.findById(productoId)
+                .orElseThrow(() -> new BusinessException("Producto no encontrado con ID: " + productoId));
+        
+        producto.setStock(producto.getStock() + cantidad);
+        productoRepository.save(producto);
+    }
+
+    @Override
+    public boolean verificarStock(Integer productoId, Integer cantidad) {
+        Producto producto = productoRepository.findById(productoId)
+                .orElseThrow(() -> new BusinessException("Producto no encontrado con ID: " + productoId));
+        
+        return producto.getStock() >= cantidad;
     }
 }

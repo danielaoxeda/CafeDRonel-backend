@@ -1,23 +1,32 @@
 package com.cafedronel.cafedronelbackend.services.producto;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.MockitoAnnotations;
+
 import com.cafedronel.cafedronelbackend.data.dto.producto.ProductoRequestDTO;
 import com.cafedronel.cafedronelbackend.data.dto.producto.ProductoResponseDTO;
 import com.cafedronel.cafedronelbackend.data.model.Producto;
 import com.cafedronel.cafedronelbackend.exceptions.BusinessException;
 import com.cafedronel.cafedronelbackend.repository.ProductoRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 class ImpProductoServiceTest {
 
@@ -147,5 +156,90 @@ class ImpProductoServiceTest {
         assertThrows(BusinessException.class, () -> productoService.delete(999));
         verify(productoRepository, times(1)).existsById(999);
         verify(productoRepository, never()).deleteById(anyInt());
+    }
+
+    @Test
+    void disminuirStock_StockSuficiente_DisminuyeCorrectamente() {
+        // Arrange
+        producto.setStock(10);
+        when(productoRepository.findById(1)).thenReturn(Optional.of(producto));
+        when(productoRepository.save(any(Producto.class))).thenReturn(producto);
+
+        // Act
+        productoService.disminuirStock(1, 3);
+
+        // Assert
+        assertEquals(7, producto.getStock());
+        verify(productoRepository, times(1)).findById(1);
+        verify(productoRepository, times(1)).save(producto);
+    }
+
+    @Test
+    void disminuirStock_StockInsuficiente_LanzaExcepcion() {
+        // Arrange
+        producto.setStock(2);
+        when(productoRepository.findById(1)).thenReturn(Optional.of(producto));
+
+        // Act & Assert
+        BusinessException exception = assertThrows(BusinessException.class, 
+                () -> productoService.disminuirStock(1, 5));
+        
+        assertTrue(exception.getMessage().contains("Stock insuficiente"));
+        verify(productoRepository, times(1)).findById(1);
+        verify(productoRepository, never()).save(any(Producto.class));
+    }
+
+    @Test
+    void aumentarStock_ProductoExistente_AumentaCorrectamente() {
+        // Arrange
+        producto.setStock(5);
+        when(productoRepository.findById(1)).thenReturn(Optional.of(producto));
+        when(productoRepository.save(any(Producto.class))).thenReturn(producto);
+
+        // Act
+        productoService.aumentarStock(1, 3);
+
+        // Assert
+        assertEquals(8, producto.getStock());
+        verify(productoRepository, times(1)).findById(1);
+        verify(productoRepository, times(1)).save(producto);
+    }
+
+    @Test
+    void verificarStock_StockSuficiente_RetornaTrue() {
+        // Arrange
+        producto.setStock(10);
+        when(productoRepository.findById(1)).thenReturn(Optional.of(producto));
+
+        // Act
+        boolean resultado = productoService.verificarStock(1, 5);
+
+        // Assert
+        assertTrue(resultado);
+        verify(productoRepository, times(1)).findById(1);
+    }
+
+    @Test
+    void verificarStock_StockInsuficiente_RetornaFalse() {
+        // Arrange
+        producto.setStock(3);
+        when(productoRepository.findById(1)).thenReturn(Optional.of(producto));
+
+        // Act
+        boolean resultado = productoService.verificarStock(1, 5);
+
+        // Assert
+        assertFalse(resultado);
+        verify(productoRepository, times(1)).findById(1);
+    }
+
+    @Test
+    void verificarStock_ProductoNoExistente_LanzaExcepcion() {
+        // Arrange
+        when(productoRepository.findById(999)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(BusinessException.class, () -> productoService.verificarStock(999, 1));
+        verify(productoRepository, times(1)).findById(999);
     }
 }
