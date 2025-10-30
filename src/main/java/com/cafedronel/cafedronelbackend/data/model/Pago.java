@@ -1,12 +1,28 @@
 package com.cafedronel.cafedronelbackend.data.model;
 
-import jakarta.persistence.*;
-import lombok.Data;
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "pago")
-@Data  
+@Getter
+@Setter
+@ToString(exclude = {"pedido"})
+@EqualsAndHashCode(exclude = {"pedido"})
 public class Pago {
 
     @Id
@@ -15,6 +31,7 @@ public class Pago {
 
     @OneToOne
     @JoinColumn(name = "id_pedido")
+    @JsonBackReference("pedido-pago")
     private Pedido pedido;
 
     private String metodoPago;
