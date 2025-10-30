@@ -1,5 +1,30 @@
 package com.cafedronel.cafedronelbackend.controllers.pedido;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.cafedronel.cafedronelbackend.data.dto.pedido.CambiarEstadoPedidoDTO;
 import com.cafedronel.cafedronelbackend.data.dto.pedido.PedidoDTO;
 import com.cafedronel.cafedronelbackend.data.enums.EstadoPedido;
 import com.cafedronel.cafedronelbackend.data.model.Pedido;
@@ -8,26 +33,6 @@ import com.cafedronel.cafedronelbackend.repository.PedidoRepository;
 import com.cafedronel.cafedronelbackend.repository.UsuarioRepository;
 import com.cafedronel.cafedronelbackend.services.pedido.PedidoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -149,9 +154,12 @@ class PedidoControllerTest {
         pedido.setEstado(EstadoPedido.ENTREGADO);
         when(pedidoService.cambiarEstado(1, EstadoPedido.ENTREGADO)).thenReturn(pedido);
 
+        CambiarEstadoPedidoDTO cambiarEstadoDTO = new CambiarEstadoPedidoDTO();
+        cambiarEstadoDTO.setEstado(EstadoPedido.ENTREGADO);
+
         mockMvc.perform(patch("/api/v1/pedidos/1/estado")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("\"ENTREGADO\""))
+                .content(objectMapper.writeValueAsString(cambiarEstadoDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idPedido").value(1))
                 .andExpect(jsonPath("$.estado").value("ENTREGADO"));

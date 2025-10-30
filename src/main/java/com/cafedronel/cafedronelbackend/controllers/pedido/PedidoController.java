@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cafedronel.cafedronelbackend.data.dto.MessageResponse;
+import com.cafedronel.cafedronelbackend.data.dto.pedido.CambiarEstadoPedidoDTO;
 import com.cafedronel.cafedronelbackend.data.dto.pedido.PedidoDTO;
 import com.cafedronel.cafedronelbackend.data.enums.EstadoPedido;
 import com.cafedronel.cafedronelbackend.data.model.DetallePedido;
@@ -124,8 +125,8 @@ public class PedidoController {
 
     @PatchMapping("/{id}/estado")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Pedido> cambiarEstadoPedido(@PathVariable Integer id, @RequestBody EstadoPedido nuevoEstado) {
-        return ResponseEntity.ok(pedidoService.cambiarEstado(id, nuevoEstado));
+    public ResponseEntity<Pedido> cambiarEstadoPedido(@PathVariable Integer id, @Valid @RequestBody CambiarEstadoPedidoDTO cambiarEstadoDTO) {
+        return ResponseEntity.ok(pedidoService.cambiarEstado(id, cambiarEstadoDTO.getEstado()));
     }
 
     @DeleteMapping("/{id}")
