@@ -1,5 +1,6 @@
 package com.cafedronel.cafedronelbackend.data.model;
 
+import com.cafedronel.cafedronelbackend.data.enums.EstadoPedido;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.Date;
@@ -21,7 +22,9 @@ public class Pedido {
     @Temporal(TemporalType.DATE)
     private Date fecha;
 
-    private String estado;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado")
+    private EstadoPedido estado;
     private String telefono;
     private String direccion;
 

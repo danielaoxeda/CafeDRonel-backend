@@ -1,5 +1,6 @@
 package com.cafedronel.cafedronelbackend.data.dto.pedido;
 
+import com.cafedronel.cafedronelbackend.data.enums.EstadoPedido;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -15,7 +16,7 @@ public class PedidoDTO {
     private Integer idUsuario;
     
     private Date fecha;
-    private String estado;
+    private EstadoPedido estado;
     
     @NotBlank(message = "El teléfono es obligatorio")
     private String telefono;

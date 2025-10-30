@@ -1,5 +1,6 @@
 package com.cafedronel.cafedronelbackend.services.pedido;
 
+import com.cafedronel.cafedronelbackend.data.enums.EstadoPedido;
 import com.cafedronel.cafedronelbackend.data.model.Pedido;
 import java.util.List;
 import java.util.Optional;
@@ -11,5 +12,5 @@ public interface PedidoService {
     Pedido save(Pedido pedido);
     Pedido update(Integer id, Pedido pedido);
     void delete(Integer id);
-    Pedido cambiarEstado(Integer id, String nuevoEstado);
+    Pedido cambiarEstado(Integer id, EstadoPedido nuevoEstado);
 }

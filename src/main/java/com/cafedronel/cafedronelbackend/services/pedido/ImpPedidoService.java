@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cafedronel.cafedronelbackend.data.enums.EstadoPedido;
 import com.cafedronel.cafedronelbackend.data.model.Pedido;
 import com.cafedronel.cafedronelbackend.exceptions.BusinessException;
 import com.cafedronel.cafedronelbackend.repository.PedidoRepository;
@@ -54,7 +55,7 @@ public class ImpPedidoService implements PedidoService {
     }
 
     @Override
-    public Pedido cambiarEstado(Integer id, String nuevoEstado) {
+    public Pedido cambiarEstado(Integer id, EstadoPedido nuevoEstado) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("Pedido no encontrado con ID: " + id));
         pedido.setEstado(nuevoEstado);

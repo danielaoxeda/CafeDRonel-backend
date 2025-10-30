@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cafedronel.cafedronelbackend.data.dto.MessageResponse;
 import com.cafedronel.cafedronelbackend.data.dto.pedido.PedidoDTO;
+import com.cafedronel.cafedronelbackend.data.enums.EstadoPedido;
 import com.cafedronel.cafedronelbackend.data.model.DetallePedido;
 import com.cafedronel.cafedronelbackend.data.model.Pedido;
 import com.cafedronel.cafedronelbackend.data.model.Producto;
@@ -79,7 +80,7 @@ public class PedidoController {
         Pedido pedido = new Pedido();
         pedido.setUsuario(usuario);
         pedido.setFecha(new Date());
-        pedido.setEstado("PENDIENTE");
+        pedido.setEstado(EstadoPedido.PENDIENTE);
         pedido.setTelefono(pedidoDTO.getTelefono());
         pedido.setDireccion(pedidoDTO.getDireccion());
         
@@ -123,7 +124,7 @@ public class PedidoController {
 
     @PatchMapping("/{id}/estado")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Pedido> cambiarEstadoPedido(@PathVariable Integer id, @RequestBody String nuevoEstado) {
+    public ResponseEntity<Pedido> cambiarEstadoPedido(@PathVariable Integer id, @RequestBody EstadoPedido nuevoEstado) {
         return ResponseEntity.ok(pedidoService.cambiarEstado(id, nuevoEstado));
     }
 
@@ -142,7 +143,7 @@ public class PedidoController {
         pedido.setIdPedido(pedidoDTO.getIdPedido());
         pedido.setUsuario(usuario);
         pedido.setFecha(pedidoDTO.getFecha() != null ? pedidoDTO.getFecha() : new Date());
-        pedido.setEstado(pedidoDTO.getEstado());
+        pedido.setEstado(pedidoDTO.getEstado() != null ? pedidoDTO.getEstado() : EstadoPedido.PENDIENTE);
         pedido.setTelefono(pedidoDTO.getTelefono());
         pedido.setDireccion(pedidoDTO.getDireccion());
         

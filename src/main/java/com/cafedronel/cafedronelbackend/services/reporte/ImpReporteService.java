@@ -155,7 +155,7 @@ public class ImpReporteService implements ReporteService {
                 row.createCell(2).setCellValue(pedido.getCorreoCliente());
                 row.createCell(3)
                         .setCellValue(pedido.getFechaPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-                row.createCell(4).setCellValue(pedido.getEstado());
+                row.createCell(4).setCellValue(pedido.getEstado().getDescripcion());
                 row.createCell(5).setCellValue(pedido.getTotal());
                 row.createCell(6).setCellValue(pedido.getCantidadProductos());
                 row.createCell(7).setCellValue(pedido.getMetodoPago());

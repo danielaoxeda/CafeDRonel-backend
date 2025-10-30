@@ -1,5 +1,6 @@
 package com.cafedronel.cafedronelbackend.services.pedido;
 
+import com.cafedronel.cafedronelbackend.data.enums.EstadoPedido;
 import com.cafedronel.cafedronelbackend.data.model.Pedido;
 import com.cafedronel.cafedronelbackend.exceptions.BusinessException;
 import com.cafedronel.cafedronelbackend.repository.PedidoRepository;
@@ -33,7 +34,7 @@ class ImpPedidoServiceTest {
         
         pedido = new Pedido();
         pedido.setIdPedido(1);
-        pedido.setEstado("PENDIENTE");
+        pedido.setEstado(EstadoPedido.PENDIENTE);
         pedido.setDireccion("Calle Principal 123");
         pedido.setTelefono("987654321");
     }
@@ -128,9 +129,9 @@ class ImpPedidoServiceTest {
         when(pedidoRepository.findById(1)).thenReturn(Optional.of(pedido));
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
         
-        Pedido result = pedidoService.cambiarEstado(1, "COMPLETADO");
+        Pedido result = pedidoService.cambiarEstado(1, EstadoPedido.ENTREGADO);
         
-        assertEquals("COMPLETADO", result.getEstado());
+        assertEquals(EstadoPedido.ENTREGADO, result.getEstado());
         verify(pedidoRepository, times(1)).findById(1);
         verify(pedidoRepository, times(1)).save(pedido);
     }
@@ -139,7 +140,7 @@ class ImpPedidoServiceTest {
     void cambiarEstado_notFound() {
         when(pedidoRepository.findById(1)).thenReturn(Optional.empty());
         
-        assertThrows(BusinessException.class, () -> pedidoService.cambiarEstado(1, "COMPLETADO"));
+        assertThrows(BusinessException.class, () -> pedidoService.cambiarEstado(1, EstadoPedido.ENTREGADO));
         
         verify(pedidoRepository, times(1)).findById(1);
         verify(pedidoRepository, never()).save(any(Pedido.class));

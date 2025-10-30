@@ -1,6 +1,7 @@
 package com.cafedronel.cafedronelbackend.controllers.pedido;
 
 import com.cafedronel.cafedronelbackend.data.dto.pedido.PedidoDTO;
+import com.cafedronel.cafedronelbackend.data.enums.EstadoPedido;
 import com.cafedronel.cafedronelbackend.data.model.Pedido;
 import com.cafedronel.cafedronelbackend.data.model.Usuario;
 import com.cafedronel.cafedronelbackend.repository.PedidoRepository;
@@ -62,7 +63,7 @@ class PedidoControllerTest {
         pedido.setIdPedido(1);
         pedido.setUsuario(usuario);
         pedido.setFecha(new Date());
-        pedido.setEstado("PENDIENTE");
+        pedido.setEstado(EstadoPedido.PENDIENTE);
         pedido.setDireccion("Calle Test 123");
         pedido.setTelefono("123456789");
 
@@ -145,15 +146,15 @@ class PedidoControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void cambiarEstadoPedido() throws Exception {
-        pedido.setEstado("COMPLETADO");
-        when(pedidoService.cambiarEstado(1, "COMPLETADO")).thenReturn(pedido);
+        pedido.setEstado(EstadoPedido.ENTREGADO);
+        when(pedidoService.cambiarEstado(1, EstadoPedido.ENTREGADO)).thenReturn(pedido);
 
         mockMvc.perform(patch("/api/v1/pedidos/1/estado")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("\"COMPLETADO\""))
+                .content("\"ENTREGADO\""))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idPedido").value(1))
-                .andExpect(jsonPath("$.estado").value("COMPLETADO"));
+                .andExpect(jsonPath("$.estado").value("ENTREGADO"));
     }
 
     @Test
