@@ -1,8 +1,7 @@
 package com.cafedronel.cafedronelbackend.config;
 
-import com.cafedronel.cafedronelbackend.data.dto.error.ApiError;
-import com.cafedronel.cafedronelbackend.exceptions.BusinessException;
-import jakarta.servlet.http.HttpServletRequest;
+import java.time.OffsetDateTime;
+
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.OffsetDateTime;
+import com.cafedronel.cafedronelbackend.data.dto.error.ApiError;
+import com.cafedronel.cafedronelbackend.exceptions.BusinessException;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Order(1)
 @RestControllerAdvice(basePackages = "com.cafedronel.cafedronelbackend.controllers")
@@ -74,6 +76,13 @@ public class GlobalExceptionConfig {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex, HttpServletRequest req) {
         ex.printStackTrace(); // o logger.error("Unexpected error", ex);
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Ha ocurrido un error interno", req.getRequestURI());
+        
+        // Proporcionar más detalles para debugging en desarrollo
+        String message = "Ha ocurrido un error interno";
+        if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
+            message += ": " + ex.getMessage();
+        }
+        
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, message, req.getRequestURI());
     }
 }

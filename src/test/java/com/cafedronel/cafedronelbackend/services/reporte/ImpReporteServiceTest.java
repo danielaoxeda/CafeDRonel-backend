@@ -1,24 +1,26 @@
 package com.cafedronel.cafedronelbackend.services.reporte;
 
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import com.cafedronel.cafedronelbackend.data.dto.reporte.ReporteClientesDTO;
 import com.cafedronel.cafedronelbackend.data.model.Rol;
 import com.cafedronel.cafedronelbackend.data.model.Usuario;
 import com.cafedronel.cafedronelbackend.repository.PedidoRepository;
 import com.cafedronel.cafedronelbackend.repository.ProductoRepository;
 import com.cafedronel.cafedronelbackend.repository.UsuarioRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ImpReporteServiceTest {
@@ -47,6 +49,7 @@ class ImpReporteServiceTest {
                 .telefono("12345678")
                 .direccion("Calle 123")
                 .rol(Rol.CLIENTE)
+                .activo(true)
                 .build();
 
         cliente2 = Usuario.builder()
@@ -56,6 +59,7 @@ class ImpReporteServiceTest {
                 .telefono("87654321")
                 .direccion("Avenida 456")
                 .rol(Rol.CLIENTE)
+                .activo(true)
                 .build();
     }
 

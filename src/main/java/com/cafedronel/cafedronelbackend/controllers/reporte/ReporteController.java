@@ -1,27 +1,32 @@
 package com.cafedronel.cafedronelbackend.controllers.reporte;
 
-import com.cafedronel.cafedronelbackend.data.dto.reporte.ReporteClientesDTO;
-import com.cafedronel.cafedronelbackend.data.dto.reporte.ReportePedidosDTO;
-import com.cafedronel.cafedronelbackend.data.dto.reporte.ReporteProductosDTO;
-import com.cafedronel.cafedronelbackend.data.dto.reporte.ReporteVentasDTO;
-import com.cafedronel.cafedronelbackend.services.reporte.ReporteService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
+import com.cafedronel.cafedronelbackend.data.dto.reporte.ReporteClientesDTO;
+import com.cafedronel.cafedronelbackend.data.dto.reporte.ReportePedidosDTO;
+import com.cafedronel.cafedronelbackend.data.dto.reporte.ReporteProductosDTO;
+import com.cafedronel.cafedronelbackend.data.dto.reporte.ReporteVentasDTO;
+import com.cafedronel.cafedronelbackend.services.reporte.ReporteService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/reportes")
@@ -107,9 +112,17 @@ public class ReporteController {
     @Operation(summary = "Descargar reporte de pedidos en Excel", description = "Genera y descarga un archivo Excel con el reporte de pedidos")
     public ResponseEntity<byte[]> descargarExcelPedidos(
             @Parameter(description = "Fecha de inicio (formato: yyyy-MM-dd)")
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @Parameter(description = "Fecha de fin (formato: yyyy-MM-dd)")
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+        
+        // Si no se proporcionan fechas, usar el último mes
+        if (fechaInicio == null) {
+            fechaInicio = LocalDate.now().minusMonths(1);
+        }
+        if (fechaFin == null) {
+            fechaFin = LocalDate.now();
+        }
         
         byte[] excelData = reporteService.generarExcelPedidos(fechaInicio, fechaFin);
         
@@ -224,5 +237,22 @@ public class ReporteController {
         );
         
         return ResponseEntity.ok(formatos);
+    }
+
+    @GetMapping("/test/excel/pedidos")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @Operation(summary = "Test endpoint para Excel de pedidos", description = "Endpoint de prueba para verificar la generación de Excel de pedidos")
+    public ResponseEntity<String> testExcelPedidos() {
+        try {
+            LocalDate fechaInicio = LocalDate.now().minusMonths(1);
+            LocalDate fechaFin = LocalDate.now();
+            
+            byte[] excelData = reporteService.generarExcelPedidos(fechaInicio, fechaFin);
+            
+            return ResponseEntity.ok("Excel generado exitosamente. Tamaño: " + excelData.length + " bytes");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error generando Excel: " + e.getMessage());
+        }
     }
 }
